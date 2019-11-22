@@ -1,0 +1,485 @@
+@charset "UTF-8";
+/* CSS Document */
+
+@import url('https://fonts.googleapis.com/css?family=Shadows+Into+Light&display=swap');
+
+*{
+	margin:0;
+	padding:0;
+    line-height: 0;
+}
+
+html {
+    margin: 0 auto;
+    overflow:hidden;
+
+}
+
+/*footer 固定スタイル*/
+html{
+    height:100%;
+    position: relative;
+    }
+
+body{
+    /*padding-bottom: 1.5em;*/
+}
+
+footer {
+    /*height:1.5em;*/
+    position:absolute;
+    bottom:0;
+    z-index:1;
+}
+        
+.-headerFixed{
+    padding-top:0 !important;
+}
+
+/*/////footer 固定スタイル*/
+
+a img {border:0;}
+
+div, p, li, h1, h2, h3, h4{
+    line-height: 160%;
+}
+
+body{
+    padding:0;
+    margin:0;
+    background-color: #fff;
+    transition-property: all;
+    transition-duration: 3000ms;
+    transition-delay: 3000ms;
+    transition-timing-function: linear;
+    }
+            
+body.picturelist{
+    background-color: #fff;   
+    }
+
+body.bgc{
+    background-color: #333 !important;
+    }
+          
+
+            
+
+.control,
+#target{
+    width:100%;
+    height:100%;
+    position:fixed;
+    top:0;
+    right:0;
+    background-color:transparent;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top center;
+    }
+            
+
+.control{
+    z-index:0;
+}
+
+
+            
+#target{
+    z-index:-1;
+    opacity: 0.0;
+    animation-name: zoom;
+    animation-duration: 17s;
+    animation-timing-function: ease-in-out;
+    animation-delay: 1s;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+    animation-play-state: running;
+    animation-fill-mode: forwards;
+    transform-origin:top left;
+}
+
+@keyframes zoom {
+  0% {
+      transform: scale(1.8,1.8);
+      background-position: top left;
+      opacity:0.0;
+  }
+
+  10% {
+      opacity:1.0;
+    } 
+    
+  35% {
+      background-position: top center;
+      opacity:1.0;
+    }    
+    
+  60% {
+      transform: scale(1.0,1.0);
+      background-position: center;
+    }
+    
+  93% {
+      background-position: bottom center;
+  }
+    
+  98% {
+      opacity:1.0;
+  }
+
+  100% {
+      transform: scale(1.0,1.0);
+      background-position: bottom center;
+      opacity:0.0;
+  }
+            }
+/*zoom________*/
+
+
+
+@keyframes slide {
+  0% {
+      transform: scale(1.5,1.5);
+      background-position: top left;
+      opacity:0.0;
+  }
+
+  10% {
+      opacity:1.0;
+    }  
+
+  40% {
+      background-position: top left;
+    }
+
+  93% {
+      transform: scale(1.0,1.0);
+  }
+    
+  95% {
+      background-position: bottom right;
+      opacity:1.0;
+  }
+
+  100% {
+      background-position: bottom right;
+      opacity:0.0;
+  }
+            }
+/*slide ________*/
+
+
+
+.navi {
+    padding:0.2em 1em;
+    background-color: rgba(255,255,255,0.2);
+    /*box-shadow:10px 10px 20px 10px rgba(0,0,0,0.1);*/
+    z-index:0;
+    }
+
+footer{
+    color:#222;
+    width:100%;
+    background-color: rgba(255,255,255,0.3);
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+    }
+            
+/*navi,footer の transition*/    
+.navi,footer{
+    opacity: 0.0;
+    transition-property: opacity;
+    transition-duration: 1.2s;
+    transition-delay: 2.6s;
+    transition-timing-function: linear;
+    }
+
+.appear{    
+     opacity:0.8;
+    }
+/*navi,footer の transition*/    
+
+
+footer div{
+    padding:0.3em 0.5em;
+    cursor: pointer;
+    font-size: 105%;
+    text-shadow: 0px 0px 2px #fff;
+    letter-spacing:.7px;
+    }
+
+footer div:active{
+    color:#fff;
+    background-color: #76706b;
+    }
+
+#originUrl:link,
+#originUrl:hover,
+#originUrl:visited{
+    color:#222;
+    }
+
+.navi div{
+    display: inline-block;
+    }
+            
+#title{
+    font-size: calc(45% + 2vw);
+    margin: 0;
+    border-bottom: 1px solid #666;
+    text-shadow: 1px 1px 10px #fff;
+    background-image: url(https://medibang.com/resources/images/logo-ARTstreet.svg);
+    background-repeat: no-repeat;
+    background-position: right;
+    background-size: 12%;
+}
+
+#author,
+.author{
+    font-family: serif;
+    text-shadow: 0px 0px 4px #fff;
+    }
+
+#author{
+    font-size: calc(40% + 1vw);
+    }
+
+/*/////////////////////*/
+            #durationControler{
+                position: relative;
+            }
+            
+            #durationVal{
+                position: absolute;
+                margin:1em 0;
+                bottom:2em;
+                left:1em;
+                background-color: rgba(255,255,255,0.8);
+                box-shadow: 1px 1px 5px #333;
+                border-radius:8px;
+                overflow: hidden;
+            }
+            
+
+            #durationVal li{
+                display: none;
+                list-style: none;
+                margin: 0;
+                padding: 1em;
+                line-height:150%;
+                white-space:nowrap;
+                }
+/*/////////////////////*/
+
+
+.settingItem{
+    border-bottom:1px dotted #fff;
+    border-top:1px dotted #fff;
+    font-size: 60%;
+    padding: 0 1em;
+    text-align: center;
+}
+
+#settingCycle,
+#settingSpec{
+    padding-bottom: 0.5em;
+    text-align: center;
+}
+
+#settingCycle div,
+#settingSpec div{
+    cursor: pointer;
+    padding: 2px 5px;
+}
+
+.selected::before{
+    content: '✓';
+    margin-left: -1em;
+}
+
+
+
+
+#clip{
+    position: relative;
+    }
+
+#result{
+    font-size: 110%;
+    display: none;
+    color:#1e90ff;
+    padding:1em;
+    position: absolute;
+    bottom:4em;
+    left:1em;
+    background-color: rgba(255,255,255,0.8);
+    box-shadow: 1px 1px 5px #333;
+    border-radius:8px;
+    white-space: nowrap;
+    }
+
+
+/*overlay___________________*/
+.overlay{
+    width: 100%;
+    height:100%;
+    background-color: #000;
+    opacity: 0.0;
+    position: absolute;
+    top:0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition-property: all;
+    transition-duration: 1s;
+    transition-delay: 1s;
+    transition-timing-function: linear;
+}
+
+.overlayed{
+    opacity:0.5;
+}
+
+#settingText{
+    padding-top:1em;
+}
+
+#settingText,
+#overlayText{
+    display:none;
+    color:#fff;
+    font-size: 5vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform : translate(-50%,-50%);
+    transform : translate(-50%,-50%);
+    letter-spacing: 2px;
+    font-family: 'Shadows Into Light', cursive;
+    text-shadow: 1px 1px 15px #000;
+    white-space: nowrap;
+}
+
+#overlayText p{
+    margin: 1em 0;
+    cursor: pointer;
+}
+
+
+
+#close span{
+    padding: 10px 0.5em;
+    display: inline-block;
+    vertical-align: text-top;
+}
+
+    #close span:before, 
+    #close span:after {
+        position: absolute;
+        content: ' ';
+        height: 1em;
+        width: 2px;
+        background-color: #fff;
+}
+    #close span:before {
+        transform: rotate(45deg);
+    }
+
+    #close span:after {
+        transform: rotate(-45deg);
+}
+
+
+/* Launch Splash */
+.wrapper,
+#wrap{
+    z-index: 99999;    
+}
+
+.wrapper::before,
+#wrap::before{
+    content: 'Cruise Script \A for \A MediBang';
+    position: fixed;
+    background: #000;
+    height: 100%;
+    width: 100%;
+    z-index: 99999;
+    color: #999;
+    opacity: 0.8;
+    text-align: center;
+    padding: 30vh 0;
+    white-space: pre;
+    letter-spacing: 2px;
+    line-height: 140%; 
+    font-size: 5vh;
+    font-family: 'Shadows Into Light', cursive;
+    
+    animation-name: splash;
+    animation-duration: 3s;
+    animation-timing-function: linear;
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+    animation-direction: normal;
+    animation-play-state: running;
+    animation-fill-mode: forwards;
+    }
+
+
+@keyframes splash{
+  0% {
+      opacity:0.2;
+  }
+    
+  10% {
+      opacity:0.8;
+  } 
+    
+  80% {
+      opacity:0.8;
+  }   
+    
+  100% {
+      opacity:0.2;
+  }
+}
+
+
+@media screen and (max-width: 1000px) {
+    
+    body{
+        font-size:110%;
+    }
+
+
+    #title{
+        font-size: calc(120% + 1vw);
+        background-size: 20%;
+    }
+
+    #author{
+        font-size: calc(80% + 1vw);
+            }
+    
+    footer{
+        font-size: calc(75% + 1vw);
+        /*padding:0.5em;*/
+    }
+        
+	@media screen and (-webkit-min-device-pixel-ratio:0) and (min-resolution: .001dpcm) {
+	{
+		max-height:100%; /*android chrome font-size-bug*/
+		}
+	}
+}
+
+
+
+
+
+	
+
