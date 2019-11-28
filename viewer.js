@@ -170,7 +170,7 @@ $(function() {
         var tmp = [];
         for (var i=0; i<elms; i++) {
             var img = $(source).find('.view-item_image').eq(i).find('img').attr('src');
-            var originUrl = $(source).find('.view-item_image').eq(i).parent().attr('href');
+            var originUrl = $(source).find('.view-item_image').eq(i).find('a').attr('href');
             var title = $(source).find('.view-item_heading').eq(i).text();
             var title = $.trim(title);
             var author = $(source).find('.asAuthorProfile__authorName').text();
