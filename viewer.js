@@ -86,11 +86,13 @@ $(function() {
         var tmp = [];
         for (var i=0; i<elms; i++) {
             var img = $(source).find('.picturelist-cont-thumb').eq(i).find('img').attr('src');
-            var originUrl = $(source).find('.picturelist-cont-ttl').eq(i).find('a').attr('href');
+            //var originUrl = $(source).find('.picturelist-cont-ttl').eq(i).find('a').attr('href');
+            var originUrl = $(source).find('.picturelist-cont-thumb').eq(i).find('a').attr('href');
             var originUrl = originUrl.split("?");
             var originUrl = originUrl[0];
-            var title = $(source).find('.picturelist-cont-ttl').eq(i).find('a').text();
-            var title = $.trim(title);
+            //var title = $(source).find('.picturelist-cont-ttl').eq(i).find('a').text();
+            //var title = $.trim(title);
+            var title = "";
             var author = $(source).find('.picturelist-cont-author-name').eq(i).find('a').text();
             var author = $.trim(author);
             
@@ -116,9 +118,10 @@ $(function() {
         var tmp = [];
         for (var i=0; i<elms; i++) {
             var img = $(source).find('.illust-item_image').eq(i).find('img').attr('src');
-            var title = $(source).find('.illust-item_heading').eq(i).find('a').text();
-            var title = $.trim(title);
-            var originUrl = $(source).find('.illust-item_heading').eq(i).find('a').attr('href');
+            //var title = $(source).find('.illust-item_heading').eq(i).find('a').text();
+            //var title = $.trim(title);
+            var title = "";
+            var originUrl = $(source).find('.illust-item_box').eq(i).find('a').attr('href');
             var originUrl = originUrl.split("?");
             var originUrl = originUrl[0];
             var author = $(source).find('.illust-item_link').eq(i).text();
@@ -247,7 +250,8 @@ $(function() {
     
         $('body').append('<div class="control"></div>');
         $(".control").append('<div class="navi"></div>');
-        $(".navi").append('<h1 id="title"></h1><div class="author">Author&nbsp;:&nbsp;</div><div id="author"></div>');
+        //$(".navi").append('<h1 id="title"></h1><div class="author">Author&nbsp;:&nbsp;</div><div id="author"></div>');
+        $(".navi").append('<h1 id="title"><div class="author">Author&nbsp;:&nbsp;</div><div id="author"></div></h1>');
     
         $('.control').append('<div class="overlay"></div>');    
         $('.overlay').append('<div id="settingText"></div>');
@@ -356,10 +360,11 @@ $(function() {
     
     
     function clip(event){
-        var title = event.data.title;
+        //var title = event.data.title;
+        var author = event.data.author;
         var url = event.data.url;
-        history.pushState("",title,url);
-        document.title = title; //TITLE要素の変更
+        history.pushState("",author,url);
+        document.title = author; //TITLE要素の変更
         $('#result').show(500).fadeOut(3000);
         $('#clip').off();
     } 
@@ -427,7 +432,8 @@ $(function() {
         
 
         $('#clip').off();
-        $('#clip').on("click",{title:list[count][0] , url:originUrl},clip);
+        //$('#clip').on("click",{title:list[count][0] , url:originUrl},clip);
+        $('#clip').on("click",{author:list[count][1] , url:originUrl},clip);
 
         //スキップ機能
         $('#prev').off();
@@ -500,7 +506,7 @@ $(function() {
             $(".navi,footer").fadeIn();
             $(".navi,footer").addClass('appear');
             $("#author").html(list[count][1]);
-            $("#title").html(list[count][0]);  
+            //$("#title").html(list[count][0]);  
                         
             //背景色を白黒切り替え
             if (count % 2 == 0){
