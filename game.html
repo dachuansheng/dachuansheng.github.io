@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head prefix="og: http://ogp.me/ns#">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="content-style-type" content="text/css" />
+    <meta http-equiv="content-script-type" content="text/javascript" />
+    <meta name="robots" content="INDEX,FOLLOW" />
+
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@600&family=Righteous&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans&display=swap" rel="stylesheet">
+
+    <script src="jquery-3.5.1.min.js"></script>
+    <script src="jquery.easing.1.3.js"></script>
+
+    <script>
+        $(function() {
+
+            const sound = new Audio('zapsplat_musical_guitar_steel_strings_strum_out_of_tune_001_21797.mp3');
+                sound.preload = "auto";
+                sound.load();
+            function playStart() {
+
+                sound.play();
+            }
+
+            const music = new Audio('zapsplat_fantasy_magical_musical_glisando_005_46177.mp3');
+                            music.preload = "auto";
+                music.load();
+            function playFinish() {
+
+                music.play();
+            }
+
+            var starter;
+
+            // START _______________________________________________________
+            $('.message').click(function() {
+                $('.surface').fadeOut(2000).delay(1000);
+                $('.message').off("click");
+
+                $(".score").css('background-image', 'url(./gameImages/teacup-0.png)');
+
+                playStart();
+
+                starter = setInterval(genObjs, 1000);
+            });
+
+
+
+
+            let num = 1;
+            let score = 0;
+            let hit = 0;
+            let leaves = 0;
+            let unFermented = 0;
+            let fermented = 0;
+            let lost = 0;
+
+            function genObjs() {
+
+                let start = new Date();
+                let height = $('#area').height(); //画面高さを取得 
+
+                let left = Math.random() * 60 - 30; //中央から左右への出現位置
+                let top = Math.floor(Math.random() * 14); //上下の出現位置
+
+                let delaySec = Math.round(Math.random() * 4000); //出現時間差
+                let speed = Math.round(Math.random() * 5000) + 2000; //落下速度
+                let easeType = Math.floor(Math.random() * 4) + 1;
+
+                let easing = 'linear';
+
+                switch (easeType) {
+                    case 1:
+                        easing = 'swing';
+                        break;
+                    case 2:
+                        easing = 'easeOutBounce';
+                        break;
+                    case 3:
+                        easing = 'easeInQuart';
+                        break;
+                    default:
+                        easing = 'linear';
+                }
+
+
+                let degree = num * 10; //回転
+                let flip = (num % 2) == 1 ? 180 : 0; //反転
+
+                //unFermented クラスを付与
+                $("#area").append('<div class="obj unFermented" id="obj' + num + '"></div>');
+                $("#obj" + num).append('<div id="green"></div>');
+
+                $('#obj' + num).css('transform-origin', 'center');
+                $('#obj' + num).css('transform', 'translate(' + left + 'vw,' + top + 'vh) rotate(' + degree + 'deg) rotateY(' + flip + 'deg)');
+                $('#obj' + num).delay(delaySec).show(300);
+
+                //下記のアニメーションの完了後に内部関数を実行する
+                $('#obj' + num).stop().animate({
+                    bottom: "-5vh",
+                }, speed, easing, function() {
+                    $(this).fadeOut(500);
+                    if ($(".score").hasClass("gameOver")) {
+                        return;
+                    }
+                    $(this).off('click');
+                    $(this).remove(); // REMOVE OBJs
+
+                    //落下した茶葉を計上する
+                    leaves++;
+
+                });
+
+
+
+
+
+                // CLICK _______________________________________________________
+                $('#obj' + num).on('click', function() {
+
+                    $(this).off('click'); //重複発生を回避
+                    play(); //sound
+
+                    let stop = new Date();
+                    let diff = stop.getTime() - start.getTime();
+
+                    let positionY = $(this).position(); //クリックされた時の座標
+                    positionY = Math.floor(positionY.top);
+
+                    let point = (positionY / height * 100); //画面高さからの比率
+                    point = Math.ceil(point / 15);
+
+                    // 茶葉の色(class)に応じてスコアを調整
+                    let stat = 'fermented';
+                    if ($(this).hasClass('unFermented')) {
+                        point -= 1;
+                        if (point < 0) point = 0;
+                        stat = 'unFermented';
+                        unFermented++;
+                    } else {
+                        fermented++;
+                    }
+                    score += point;
+
+                    // 消失した茶葉
+                    lost = leaves - (unFermented + fermented);
+
+
+
+
+                    $('#blackTea').css('flex-grow', fermented);
+                    $('#greenTea').css('flex-grow', unFermented);
+                    $('#lost').css('flex-grow', lost);
+
+
+                    //獲得ポイント表示
+                    $(".score").append('<div id="hit' + hit + '" class="point point' + point + ' ' + stat + '">+' + point + '</div>');
+                    $(".score").addClass('getPoint');
+
+                    if (score > 85) {
+                        $(".score").css('background-image', 'url(./gameImages/teacup-5.png)');
+                    } else if (score > 60) {
+                        $(".score").css('background-image', 'url(./gameImages/teacup-4.png)');
+                    } else if (score > 40) {
+                        $(".score").css('background-image', 'url(./gameImages/teacup-3.png)');
+                    } else if (score > 20) {
+                        $(".score").css('background-image', 'url(./gameImages/teacup-2.png)');
+                    } else if (score > 5) {
+                        $(".score").css('background-image', 'url(./gameImages/teacup-1.png)');
+                    }
+
+                    //ゲームクリア条件
+                    if (score >= 100) {
+                        clear();
+                    }
+
+                    //クリックした要素を削除
+                    $(this).addClass('picked');
+                    $(this).delay(1000).queue(function() {
+                        $(this).remove();
+                    });
+
+                    //以前のポイント要素を削除
+                    let prevHit = hit - 1;
+                    $('#hit' + prevHit).delay(5000).queue(function() {
+                        $('#hit' + prevHit).remove();
+                    });
+                    hit++; //hit 数を加算
+
+
+
+                }); //___________________________________CLICK
+
+
+
+
+                $(".getPoint").on('animationend webkitAnimationEnd', function() {
+                    $(".score").removeClass('getPoint');
+                });
+
+
+                // 茶葉の変色後に class を変更
+                $('#obj' + num + ' #green').on('animationend webkitAnimationEnd', function() {
+                    $(this).parent().removeClass('unFermented');
+                });
+
+                $(".obj:nth-child(odd) , .obj:nth-child(even)").on('animationend webkitAnimationEnd', function() {
+
+                });
+
+                // SOUND /////////////////////////
+                const sound = new Audio('zapsplat_foley_bottle_water_sparkling_open_short_fizz_001_35790.mp3');
+
+                function play() {
+                    sound.preload = "auto";
+                    sound.load();
+                    sound.play();
+                }
+
+
+                num++;
+            } // genObjs /////////////////////////
+
+
+            // GAME CLEAR _______________________________________________________
+
+            function clear() {
+                clearInterval(starter);
+                aggregation();
+
+                //reset
+                score = 0;
+                $('.point').fadeOut(500).delay(1000).queue(function() {
+                    $('.point').remove();
+                });
+
+                //music 
+                playFinish();
+
+                $(".score").addClass("gameOver");
+                $(".surface").addClass("result");
+                $(".surface").delay(1000).fadeIn(500);
+                $('.message').text('Have a Cup of Tea !');
+
+
+
+                function doLoop(maxCount, i) {
+                    if (i <= maxCount) {
+                        genObjs();
+                        setTimeout(function() {
+                            doLoop(maxCount, ++i)
+                        }, 200);
+                    }
+                }
+
+                setTimeout(function() {
+                    doLoop(20, 0);
+                }, 3000);
+
+
+            } //CLEAR ///////////////
+
+
+
+
+            // AGGREGATION _______________________________________________________
+
+            function aggregation() {
+
+                // 発酵度を分類
+                let total = unFermented + fermented;
+                let fermentedAvg = fermented / total;
+                let classification = 'Oolong';
+
+                if (fermentedAvg > 0.75) {
+                    classification = 'Black';
+                } else if (fermentedAvg < 0.25) {
+                    classification = 'Green';
+                }
+
+                // 消失率を集計
+                let gradeAvg = lost / leaves;
+                let grade = '';
+
+                if (gradeAvg < 0.15) {
+                    grade = 'A';
+                } else if (gradeAvg < 0.3) {
+                    grade = 'B';
+                } else if (gradeAvg < 0.55) {
+                    grade = 'C';
+                } else {
+                    grade = 'D';
+                }
+
+
+                $('.surface').append('<p class="evaluation ' + classification + '" id="classification"></p>');
+                $('#classification').append('Classification : <span>' + classification + 'Tea</span>');
+                $('.surface').append('<p class="evaluation" id="grade"></p>');
+                $('#grade').append('Grade : <span>' + grade + '</span>');
+
+
+            }
+
+
+
+
+        });
+
+    </script>
+
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            background-image: url(./gameImages/BG-game.png);
+            background-size: cover;
+            background-position: top center;
+            background-attachment: fixed;
+            height: 100vh;
+            overflow: hidden;
+
+        }
+
+        #area {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            touch-action: manipulation;
+        }
+
+        @media screen and (max-width: 900px) {
+            #area {
+                /*height: 95vh;*/
+            }
+        }
+
+        .obj {
+            position: absolute;
+            cursor: pointer;
+            display: none;
+            background-image: url(./gameImages/tealeaf.png);
+            background-size: cover;
+            margin-left: 0;
+            z-index: 4;
+        }
+
+        .obj:nth-child(odd) {
+            width: 9vh;
+            height: 9vh;
+
+            animation: fallDownL;
+            animation-duration: 5s;
+            animation-timing-function: ease;
+            animation-delay: 1s;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes fallDownL {
+
+            0%,
+            10% {
+                margin-left: 0;
+                width: 9vh;
+                height: 9vh;
+            }
+
+            40%,
+            50% {
+                width: 8vh;
+                height: 8vh;
+                transform: rotate(-5deg);
+            }
+
+            60%,
+            70% {
+                margin-left: -30vw;
+            }
+
+            100% {
+                margin-left: 0vw;
+                width: 6vh;
+                height: 6vh;
+            }
+
+        }
+
+        .obj:nth-child(even) {
+            width: 8vh;
+            height: 8vh;
+
+            animation: fallDownR;
+            animation-duration: 5s;
+            animation-timing-function: ease-in;
+            animation-delay: 2s;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes fallDownR {
+
+            0%,
+            20% {
+                margin-right: 0;
+                width: 8vh;
+                height: 8vh;
+            }
+
+
+            50% {
+                margin-right: -20vw;
+            }
+
+            100% {
+                margin-right: -10vw;
+                width: 7vh;
+                height: 7vh;
+                transform: rotate(20deg);
+            }
+
+        }
+
+        #green {
+            background-image: url(./gameImages/tealeaf-B.png);
+            background-size: cover;
+            display: block;
+            height: 100%;
+            width: 100%;
+            opacity: 1;
+            animation: changeColor;
+            animation-duration: 1.2s;
+            animation-timing-function: ease-in;
+            animation-delay: 1s;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes changeColor {
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+
+        }
+
+        .obj.picked {
+            animation: delete;
+            animation-duration: .2s;
+            animation-timing-function: linear;
+            animation-delay: 0s;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes delete {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                filter: blur(1vh);
+            }
+
+        }
+
+
+        /* オーバーレイ ____________________________*/
+        .surface {
+            position: fixed;
+            top: 0;
+            left: 0;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100vw;
+            z-index: 2;
+            background-image: url(./gameImages/BG-teapot.png);
+            background-size: cover;
+            background-position: top center;
+
+        }
+
+        .result {
+            background-image: none;
+            background-color: rgba(10, 10, 10, .3);
+            z-index: 4;
+
+            animation: clearGame;
+            /*animation-duration: 2s;*/
+            animation-timing-function: ease-in-out;
+            animation-delay: .5s;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes clearGame {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .message {
+            font-family: 'Kaushan Script', cursive;
+            color: rgb(241, 90, 64);
+            text-shadow: 2px 2px 5px rgba(255, 255, 255, .9);
+            font-size: 5vh;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, .5);
+            padding: .2em;
+            margin: 1em 0;
+
+            animation: message;
+            animation-duration: 4s;
+            animation-timing-function: ease-in-out;
+            animation-delay: 0s;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes message {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: translateY(-3vh);
+            }
+
+            40%,
+            60% {
+                opacity: .4;
+                transform: translateY(0vh);
+            }
+        }
+
+        .evaluation {
+            margin: .5em 0;
+            font-family: 'Kumbh Sans', sans-serif;
+            font-size: 3vh;
+            color: #333;
+            text-shadow: 1px 1px 3px rgba(255, 255, 255, .9);
+            opacity: 0;
+
+            animation: appear;
+            animation-duration: 3s;
+            animation-delay: 4s;
+            animation-timing-function: ease-in-out;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+        }
+
+        #classification {
+            animation-delay: 5s;
+        }
+
+        #grade {
+            animation-delay: 7s;
+        }
+
+        @keyframes appear {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .evaluation span {
+            font-size: 4vh;
+        }
+
+        .Green span {
+            color: rgb(100, 150, 20);
+        }
+
+        .Oolong span {
+            color: rgb(200, 120, 0);
+        }
+
+        .Black span {
+            color: rgb(180, 50, 0);
+        }
+
+        /* 得点表示 ____________________________*/
+
+        .score {
+            position: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            top: 2vh;
+            left: 2vw;
+            width: 15vh;
+            height: 15vh;
+            background-size: cover;
+            z-index: 3;
+        }
+
+        /* JS で class 付与によるスタイル*/
+
+        .getPoint {
+            animation: shake;
+            animation-duration: 2s;
+            animation-timing-function: ease;
+            animation-delay: 0;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translate(0px, 1vh);
+            }
+
+            5% {
+                transform: translate(0px, -1vh);
+            }
+
+            10% {
+                transform: translate(0px, 1vh);
+            }
+
+            15% {
+                transform: translate(0px, -1vh);
+            }
+
+            20% {
+                transform: translate(0px, 1vh);
+            }
+
+            25% {
+                transform: translate(0px, -1vh);
+            }
+
+            30% {
+                transform: translate(0px, 0px);
+            }
+        }
+
+        .gameOver {
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            left: 0;
+
+            animation: gameOver;
+            animation-duration: 2s;
+            animation-timing-function: ease;
+            animation-delay: 1s;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes gameOver {
+            0% {
+                top: 2vh;
+                width: 15vh;
+                height: 15vh;
+            }
+
+            100% {
+                top: 15vh;
+                width: 100vw;
+                height: 30vh;
+            }
+        }
+
+
+        .point {
+            position: absolute;
+            top: 10vh;
+            width: 11vh;
+            height: 11vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-family: 'Grenze Gotisch', cursive;
+            font-size: 5vh;
+            color: #fff;
+            text-shadow: 2px 2px 2px rgba(0, 0, 0, .5);
+            background: radial-gradient(closest-side circle, rgba(240, 150, 50, 1), rgba(0, 0, 0, 0));
+
+            animation: addPoint;
+            animation-duration: 2s;
+            animation-timing-function: linear;
+            animation-delay: 0s;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+        }
+
+        .point.unFermented {
+            background: radial-gradient(closest-side circle, rgba(130, 200, 45, 1), rgba(0, 0, 0, 0));
+        }
+
+        .point.point0 {
+            color: #999;
+        }
+
+        @keyframes addPoint {
+            0% {
+                opacity: 0;
+                transform: translateY(0);
+            }
+
+            20%,
+            60% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(50vh);
+            }
+        }
+
+        .point3,
+        .point4 {
+            width: 13vh;
+            height: 13vh;
+            font-size: 6vh;
+        }
+
+        .point5,
+        .point6 {
+            width: 15vh;
+            height: 15vh;
+            font-size: 8vh;
+        }
+
+        .point7,
+        .point8 {
+            width: 16vh;
+            height: 16vh;
+            font-size: 10vh;
+        }
+
+        .gauge {
+            position: absolute;
+            top: 0;
+            left: 1vh;
+            height: 100vh;
+            width: 1vh;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid rgba(255, 255, 255, .9);
+        }
+
+        #blackTea {
+            background-color: rgba(240, 100, 60, .6);
+            flex-grow: 0;
+        }
+
+        #greenTea {
+            background-color: rgba(160, 200, 50, .6);
+            flex-grow: 0;
+        }
+
+        #lost {
+            background-color: rgba(120, 120, 120, .6);
+            flex-grow: 0;
+        }
+
+    </style>
+
+    <title>Pick Tea Leaves</title>
+
+</head>
+
+<body>
+
+    <div id="area"></div>
+    <div class="surface">
+        <p class="message">Try to Pick Tea Leaves.</p>
+    </div>
+    <div class="score"></div>
+    <div class="gauge">
+        <div id="greenTea"></div>
+        <div id="blackTea"></div>
+        <div id="lost"></div>
+    </div>
+
+    <!--a href='https://www.freepik.com/vectors/background'>Background vector created by freepik - www.freepik.com</a-->
+</body>
+
+</html>
